@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "smartlynk",
+    "name": "SmartLynk",
     "slug": "smartlynk",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -21,10 +21,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.manabbala.smartlynk"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "3cedaa11-eb1f-4427-929c-7e915a218e4a"
+      }
     }
   }
 }
