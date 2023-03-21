@@ -1,42 +1,39 @@
-import { View, Text, TouchableOpacity, Pressable } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
+import { useDispatch } from "react-redux";
+import { addBoard } from "../features/boardSlice";
 
-const IpScanResultCard = ({ status, ip, time, message, setDevices }) => {
-	const tempDevice = {
-		[`${ip}`]: {
-			name: "Temple Automation Device",
-			host: "Esp8266-123456.local",
-			user: { 7363062221: { name: "Manab Bala" }, 9609609064: { name: "Bibek Bala" } },
-			pass: "deviceSecretCode",
-			boardId: "esp8266-412324234",
-			location: "Temple",
-			relays: [
-				{ id: 3201115234, name: "Music System", type: "music", lastState: true },
-				{ id: 3201115843, name: "POP Light Red", type: "light", lastState: true },
-				{ id: 3201115813, name: "Fan", type: "fan", lastState: false },
-			],
-		},
+const IpScanResultCard = ({ status, ip, time, message }) => {
+	const dispatch = useDispatch();
+
+	const getBoardInfo = function (ip) {
+		const promise = fetch(`http://${ip}/board`);
+		promise
+			.then((response) => {
+				if (response.ok) {
+					// TODO: add strong check for board verification
+					return response.json();
+				} else return false;
+			})
+			.then((board) => {
+				if (board) {
+					board.ip = ip;
+					dispatch(addBoard(board));
+				} else console.log("Not a valid esp board.");
+			})
+			.catch((error) => console.log(error));
 	};
 
 	return (
 		<TouchableOpacity
 			onPress={() => {
-				setDevices(function (devices) {
-					if (devices[`${ip}`] !== undefined) {
-						return devices;
-					} else return { ...devices, ...tempDevice };
-				});
+				getBoardInfo(ip);
 			}}
 			className={`shadow-lg shadow-slate-700 rounded p-1 my-1 items-center ${
 				status ? "bg-green-500" : "bg-red-500"
 			}`}
 		>
-			{/* <Text>{status ? "Success" : "Failed"}</Text> */}
-
 			<Text>{ip}</Text>
-
-			{/* <Text>{time ? time : ""}</Text>
-			<Text>{message}</Text> */}
 		</TouchableOpacity>
 	);
 };
