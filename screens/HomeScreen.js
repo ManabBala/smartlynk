@@ -59,7 +59,11 @@ const HomeScreen = () => {
 		};
 		// dispatch(addBoard(tempBoard));
 		// TODO: temporarily adding board by manually with mDNS
-		const mdnsAddresses = ["smartlynk-1458270.local", "smartlynk-1454108.local"];
+		const mdnsAddresses = [
+			"smartlynk-1458270.local",
+			"smartlynk-1454108.local",
+			"smartlynk-16339691.local",
+		];
 		const getBoardInfo = function (ip) {
 			const promise = fetch(`http://${ip}/board`);
 			promise
