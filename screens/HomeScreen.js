@@ -15,6 +15,7 @@ import {
 	updateIpOfBoard,
 } from "../features/boardSlice";
 import { deviceState } from "../utils/api/deviceSwitchState.api";
+import ZeroconfRow from "../components/ZeroconfRow";
 
 const HomeScreen = () => {
 	const navigation = useNavigation();
@@ -124,6 +125,9 @@ const HomeScreen = () => {
 					/>
 				</TouchableOpacity>
 			</View>
+
+			{/* Zeroconf Scanner */}
+			<ZeroconfRow />
 
 			{/* Add Board by chipId */}
 			<BoardByChipId />
