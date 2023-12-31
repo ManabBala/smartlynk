@@ -24,6 +24,9 @@ const HomeScreen = () => {
 
 	const boards = useSelector(selectBoards);
 
+	// local devices scanned by zeroconf
+	const [localDevicesIp, setLocalDevicesIp] = useState([]);
+
 	// temp data to produce device
 	const tempBoard = {
 		version: "1.0.0",
@@ -59,30 +62,6 @@ const HomeScreen = () => {
 			}
 		};
 		// dispatch(addBoard(tempBoard));
-		// TODO: temporarily adding board by manually with mDNS
-		const mdnsAddresses = [
-			"smartlynk-1458270.local",
-			"smartlynk-1454108.local",
-			"smartlynk-16339691.local",
-		];
-		const getBoardInfo = function (ip) {
-			const promise = fetch(`http://${ip}/board`);
-			promise
-				.then((response) => {
-					if (response.ok) {
-						// TODO: add strong check for board verification
-						return response.json();
-					} else return false;
-				})
-				.then((board) => {
-					if (board) {
-						board.ip = ip;
-						dispatch(addBoard(board));
-					} else console.log("Not a valid esp board.");
-				})
-				.catch((error) => console.log(error));
-		};
-		mdnsAddresses.map((mdns) => getBoardInfo(mdns));
 
 		// function to check state of the switch
 		const checkDeviceState = function (chipId, ip) {
@@ -107,6 +86,29 @@ const HomeScreen = () => {
 		// return () => clearInterval(interval);
 	}, []);
 
+	useEffect(() => {
+		console.log("New local devices found/updated so checking for boards update.");
+		console.log(localDevicesIp);
+		const getBoardInfo = function (ip) {
+			const promise = fetch(`http://${ip}/board`);
+			promise
+				.then((response) => {
+					if (response.ok) {
+						// TODO: add strong check for board verification
+						return response.json();
+					} else return false;
+				})
+				.then((board) => {
+					if (board) {
+						board.ip = ip;
+						dispatch(addBoard(board));
+					} else console.log(`Not a valid esp board at ${ip}.`);
+				})
+				.catch((error) => console.log(error));
+		};
+		localDevicesIp.map((ip) => getBoardInfo(ip));
+	}, [localDevicesIp]);
+
 	return (
 		<SafeAreaView className="bg-white pt-5 px-2">
 			{/* Header */}
@@ -127,7 +129,7 @@ const HomeScreen = () => {
 			</View>
 
 			{/* Zeroconf Scanner */}
-			<ZeroconfRow />
+			<ZeroconfRow localDevicesIp={localDevicesIp} setLocalDevicesIp={setLocalDevicesIp} />
 
 			{/* Add Board by chipId */}
 			<BoardByChipId />
